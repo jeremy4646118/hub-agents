@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hub agents</title><meta name="robots" content="noindex">
+<style>
+:root{--bg:#EEF1F0;--panel:#FFFFFF;--ink:#14302D;--muted:#5E716E;--line:#D5DDDB;--me:#14302D;--meink:#F2F6F5;--accent:#E8A317;--ok:#2E8B6A;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0D1C1B;--panel:#142827;--ink:#E6EFED;--muted:#8DA3A0;--line:#26403E;--me:#E8A317;--meink:#1A1405;--accent:#E8A317;--ok:#4FC79B}}
+:root[data-theme="dark"]{--bg:#0D1C1B;--panel:#142827;--ink:#E6EFED;--muted:#8DA3A0;--line:#26403E;--me:#E8A317;--meink:#1A1405;--accent:#E8A317;--ok:#4FC79B}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*{box-sizing:border-box}
+body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:15px/1.45 "Avenir Next","Segoe UI",system-ui,sans-serif}
+.app{display:grid;grid-template-columns:270px 1fr;height:100%}
+aside{background:var(--panel);border-right:1px solid var(--line);padding:16px 12px;overflow:auto}
+h1{font:600 17px/1.2 Georgia,"Times New Roman",serif;margin:2px 8px 4px}
+.sub{color:var(--muted);font-size:12.5px;margin:0 8px 14px}
+.ag{display:flex;gap:10px;align-items:center;width:100%;text-align:left;background:none;border:0;border-radius:10px;padding:9px 8px;color:inherit;cursor:pointer;font:inherit}
+.ag:hover{background:var(--bg)}
+.ag.on{background:var(--bg);box-shadow:inset 3px 0 0 var(--c)}
+.ag.sup{margin-bottom:10px;border:1px solid var(--line)}
+.dot{width:34px;height:34px;border-radius:50%;background:var(--c);flex:none;display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;position:relative}
+.st{position:absolute;right:-1px;bottom:-1px;width:11px;height:11px;border-radius:50%;background:var(--ok);border:2px solid var(--panel)}
+.st.work{background:var(--accent);animation:p 1s infinite alternate}
+@keyframes p{to{opacity:.35}}
+.nm{font-weight:600;display:block}.ds{font-size:12px;color:var(--muted);display:block}
+.nb{margin-left:auto;background:var(--accent);color:#1A1405;border-radius:9px;font-size:11px;font-weight:700;padding:1px 7px}
+main{display:flex;flex-direction:column;min-width:0;height:100%}
+header{padding:12px 18px;border-bottom:1px solid var(--line);background:var(--panel)}
+header b{font-size:16px}
+.apis{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.apis span{font-size:12px;border:1px solid var(--line);border-radius:6px;padding:1px 8px;color:var(--muted)}
+.log{flex:1;overflow:auto;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.m{max-width:min(560px,86%);padding:9px 13px;border-radius:14px;background:var(--panel);border:1px solid var(--line)}
+.m.me{align-self:flex-end;background:var(--me);color:var(--meink);border-color:transparent}
+.m.task{border-left:4px solid var(--c);border-radius:6px;font-size:13.5px}
+.m.task i{display:block;font-style:normal;color:var(--muted);font-size:12px;margin-bottom:2px}
+.empty{margin:auto;text-align:center;color:var(--muted);max-width:300px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+.chips button{background:var(--panel);border:1px solid var(--line);color:var(--ink);border-radius:16px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
+form{display:flex;gap:8px;padding:10px 14px;border-top:1px solid var(--line);background:var(--panel)}
+input{flex:1;min-width:0;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:20px;padding:10px 14px;font:inherit}
+.send{background:var(--ink);color:var(--bg);border:0;border-radius:20px;padding:0 18px;font:inherit;font-weight:600;cursor:pointer}
+.note{font-size:11.5px;color:var(--muted);text-align:center;padding:4px}
+.bots{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.bot{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 10px 12px;text-align:center;cursor:pointer;color:inherit;font:inherit;display:flex;flex-direction:column;align-items:center;gap:6px}
+.bot:hover{border-color:var(--c)}
+.bot.lead{grid-column:1/-1;flex-direction:row;justify-content:center;gap:18px;text-align:left}
+.bot .tag{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+.bot .apis{justify-content:center}.bot.lead .apis{justify-content:flex-start}
+.bot .apis span::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--ok);margin-right:5px}
+.bot.work svg{animation:bob .6s infinite alternate}
+@keyframes bob{to{transform:translateY(-4px)}}
+.eye{transform-box:fill-box;transform-origin:center;animation:bl 4s infinite}
+@keyframes bl{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
+.ant{animation:p .5s infinite alternate}
+.bot.add{border-style:dashed;color:var(--muted);justify-content:center;min-height:190px}
+@media (prefers-reduced-motion:reduce){.bot.work svg,.eye,.ant{animation:none}}
+.h2{font:600 15px Georgia,"Times New Roman",serif;margin:22px 0 2px}
+.sks{display:flex;gap:6px;flex-wrap:wrap}
+.sk{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:14px;padding:4px 11px;font:inherit;font-size:12.5px;cursor:pointer}
+.sk.on{background:var(--accent);border-color:var(--accent);color:#1A1405;font-weight:600}
+.sk:disabled{cursor:default;opacity:.75}
+.skp{font-size:11.5px;border:1px dashed var(--accent);border-radius:6px;padding:0 7px;color:var(--muted)}
+.bot .sks{justify-content:center;margin-top:6px}
+.tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;flex:none}
+.board{position:relative;flex:none;min-height:480px;border:1px solid var(--line);border-radius:14px;background-image:radial-gradient(var(--line) 1px,transparent 1px);background-size:22px 22px}
+.lines{position:absolute;left:0;top:0;pointer-events:none}
+.lines path{fill:none;stroke:var(--muted);stroke-width:1.5;stroke-dasharray:5 5;opacity:.6}
+.board .bot{position:absolute;width:168px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
+.lks{display:flex;flex-direction:column;gap:8px}
+.lk{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 12px}
+.edit{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+.edit label{font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:2px}
+.edit input{flex:none;width:160px;border-radius:10px;padding:6px 10px;font-size:14px}
+.edit input[type=color]{width:52px;height:34px;padding:2px}
+.edit textarea{width:100%;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;padding:8px;font:inherit;font-size:13px}
+.edit label.w{flex-basis:100%}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (max-width:720px){
+.app{grid-template-columns:1fr;grid-template-rows:auto 1fr}
+aside{display:flex;gap:6px;overflow-x:auto;padding:10px;border-right:0;border-bottom:1px solid var(--line)}
+aside h1,aside .sub{display:none}
+.ag{width:auto;flex:none;padding:6px 10px 6px 6px;border:1px solid var(--line)}
+.ag.sup{margin:0}.ag.on{box-shadow:none;border-color:var(--c)}.ds{display:none}
+.m{max-width:92%}}
+@media (prefers-reduced-motion:reduce){.st.work{animation:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside id="side"></aside>
+<main>
+<header id="head"></header>
+<div class="log" id="log" aria-live="polite"></div>
+<div class="note" id="note">Connecté à Manus · une réponse peut prendre quelques minutes</div>
+<form id="f"><input id="in" placeholder="Écrire à l'agent…" autocomplete="off"><button class="send">Envoyer</button></form>
+</main>
+</div>
+<script>
+const A=[
+{id:'sup',role:'sup',n:'Superviseur',d:'Coordonne les autres agents',c:'#14302D',i:'S',apis:['Manus'],ex:['Trouve-moi 30 restaurants à Abu Dhabi sans site web','Prépare un post Instagram sur le SEO local'],sk:[],instruction:'Tu es le superviseur de mon équipe d\'agents. Tu comprends ma demande, tu la reformules clairement et tu la confies aux agents les plus adaptés.'},
+{id:'scr',n:'Scraper Google',d:'Prospects via Google Maps',c:'#2E7DB5',i:'G',apis:['Manus','Apify'],ex:['Scrape les salons de coiffure à Dubai Marina'],sk:[],instruction:'Tu es l\'agent Scraper Google. Tu utilises Apify pour collecter des prospects locaux et tu renvoies une liste structurée (nom, adresse, téléphone, site web).'},
+{id:'scp',n:'Scripts vidéo',d:'Scripts de prospection',c:'#8A5CC2',i:'V',apis:['Manus'],ex:['Écris un script de 45 s pour un dentiste'],sk:[],instruction:'Tu es l\'agent Scripts vidéo. Tu écris des scripts courts et percutants pour des vidéos de prospection.'},
+{id:'vid',n:'Vidéo',d:'Génération vidéo et voix',c:'#D2562F',i:'▶',apis:['Manus','Higgsfield','ElevenLabs'],ex:['Génère la vidéo à partir du dernier script'],sk:[],instruction:'Tu es l\'agent Vidéo. Tu génères des vidéos et des voix à partir de scripts, avec Higgsfield et ElevenLabs.'},
+{id:'ins',n:'Instagram',d:'Posts et planning',c:'#C2377A',i:'I',apis:['Manus','Instagram API'],ex:['Propose 3 posts pour cette semaine'],sk:[],instruction:'Tu es l\'agent Instagram. Tu proposes, rédiges et planifies des posts.'},
+{id:'not',n:'Notion',d:'Saisie dans tes bases',c:'#4F5B66',i:'N',apis:['Manus','Notion'],ex:['Entre les 5 derniers restaurants du Scraper dans Notion'],sk:[],instruction:'Tu es l\'agent Notion. Tu ranges les données reçues dans la base Notion prévue, proprement et sans doublons.'}];
+const T={},S={},U={};let cur='dash';
+A.forEach(a=>{T[a.id]=[];S[a.id]=0;U[a.id]=0});
+const SK=[];const COM=new Set();let RT={tasks:{},status:{}},pwd='',known={},loaded={},seen={},polling={};
+const h=v=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'),fmt=v=>h(v).replace(/\n/g,'<br>');
+async function api(path,body,method){const r=await fetch(path,{method:method||(body?'POST':'GET'),headers:{'Content-Type':'application/json','x-dash-key':pwd},body:body?JSON.stringify(body):undefined});const j=await r.json().catch(()=>({}));if(r.status===401){localStorage.removeItem('hubpwd');throw new Error('Mot de passe incorrect : recharge la page')}if(!r.ok)throw new Error(j.error||('Erreur '+r.status));return j}
+let POS={},drag=0,pend=0;try{POS=JSON.parse(localStorage.getItem('hubpos')||'{}')}catch(e){POS={}}
+const savePos=()=>{try{localStorage.setItem('hubpos',JSON.stringify(POS))}catch(e){}};
+let LK=[],linking=0,lsrc=null,editId=null,pt=null;
+const pushState=()=>{clearTimeout(pt);pt=setTimeout(()=>api('/api/state',{state:{agents:A,common:[...COM],links:LK}},'PUT').catch(e=>console.warn(e.message)),600)};
+const saveA=pushState,saveLK=pushState;
+const esc=v=>String(v||'').replace(/"/g,'&quot;');
+const editHTML=a=>`<div class="edit"><label>Nom<input id="e-n" value="${esc(a.n)}"></label><label>Lettre<input id="e-i" maxlength="2" style="width:56px" value="${esc(a.i)}"></label><label>Couleur<input id="e-c" type="color" value="${a.c}"></label><label>Description<input id="e-d" value="${esc(a.d)}"></label><label class="w">Instructions envoyées à Manus<textarea id="e-s" rows="4">${h(a.instruction||'')}</textarea></label></div>`;
+const per=()=>Math.max(2,Math.min(4,Math.floor(($('log').clientWidth-20)/184)));
+const defPos=id=>{const i=A.findIndex(x=>x.id===id),n=per();if(!i)return{x:Math.round((n*184-184)/2),y:10};const k=i-1;return{x:(k%n)*184,y:290+Math.floor(k/n)*290}};
+const P=id=>POS[id]||(POS[id]=defPos(id));
+let syncMsg='';
+async function sync(){try{const r=await api('/api/skills'),old=new Set(SK.map(x=>x.id)),first=!old.size,nw=r.skills.filter(x=>!old.has(x.id));SK.splice(0,SK.length,...r.skills.map(x=>({id:x.id,n:x.name,nw:!first&&!old.has(x.id)})));syncMsg=first?SK.length+' skills chargés':(nw.length?nw.length+' nouveau(x) skill(s) trouvé(s)':'Catalogue à jour')}catch(e){syncMsg='Erreur : '+e.message}draw()}
+const syncBtn=()=>`<button class="sk" data-sync="1">⟳ Synchroniser mes skills</button><span class="tag" style="margin:0 0 0 8px;font-size:12px">${syncMsg}</span>`;
+const sn=id=>(SK.find(s=>s.id===id)||{n:id}).n,sent=a=>[...new Set([...a.sk,...COM])].map(sn).join(', ')||'aucun';
+const chip=(s,on,lock)=>`<button class="sk ${on?'on':''}" ${lock?'disabled':''} data-sk="${s.id}">${on?'✓ ':''}${s.nw?'✦ ':''}${s.n}${lock?' (commun)':''}</button>`;
+const $=id=>document.getElementById(id),ag=id=>A.find(a=>a.id===id);
+const robot=(a,w)=>`<svg viewBox="0 0 80 90" width="${w}" aria-hidden="true"><line x1="40" y1="8" x2="40" y2="18" stroke="${a.c}" stroke-width="3"/><circle class="${S[a.id]?'ant':''}" cx="40" cy="7" r="5" fill="${S[a.id]?'#E8A317':a.c}"/><rect x="14" y="18" width="52" height="38" rx="14" fill="${a.c}"/><rect x="21" y="26" width="38" height="20" rx="9" fill="#fff" opacity=".95"/><circle class="eye" cx="32" cy="36" r="4.5" fill="${a.c}"/><circle class="eye" cx="48" cy="36" r="4.5" fill="${a.c}"/><rect x="24" y="60" width="32" height="24" rx="8" fill="${a.c}" opacity=".85"/><rect x="8" y="62" width="9" height="16" rx="4.5" fill="${a.c}"/><rect x="63" y="62" width="9" height="16" rx="4.5" fill="${a.c}"/><text x="40" y="77" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">${a.i}</text></svg>`;
+const card=(a,l)=>`<div class="bot ${S[a.id]?'work':''}" style="--c:${a.c};left:${P(a.id).x}px;top:${P(a.id).y}px" data-agent="${a.id}">${robot(a,l?88:70)}<span><span class="nm">${a.n}</span><span class="tag">${S[a.id]?'Travaille…':a.d}</span><span class="apis">${a.apis.map(x=>`<span>${x}</span>`).join('')}</span><span class="sks">${a.sk.map(id=>`<span class="skp">${sn(id)}</span>`).join('')}${COM.size?`<span class="skp">+${COM.size} commun</span>`:''}</span></span></div>`;
+const linksHTML=()=>'<h2 class="h2">Liens entre agents</h2>'+(LK.length?'<div class="lks">'+LK.map((l,i)=>`<div class="lk"><b style="color:${ag(l.from).c}">${ag(l.from).n}</b> → <b style="color:${ag(l.to).c}">${ag(l.to).n}</b><span class="sks"><button class="sk ${l.auto?'on':''}" data-lk="${i}|auto">${l.auto?'Auto':'À valider'}</button><button class="sk" data-lk="${i}|del" aria-label="Supprimer le lien">✕</button></span><span class="tag" style="margin:0">≈ 1 tâche Manus par transfert</span></div>`).join('')+'</div><p class="tag">Garde-fou : un résultat reçu par un lien ne repart jamais automatiquement vers un autre lien.</p>':'<p class="tag">Aucun lien. Clique sur « Relier deux agents », puis sur la source et la cible.</p>');
+const dashHTML=()=>'<div class="tools"><button class="sk" data-add="1">+ Nouvel agent</button><button class="sk" data-tree="1">⌗ Réorganiser en arbre</button><button class="sk '+(linking?'on':'')+'" data-link="1">🔗 '+(linking?'Clique la source, puis la cible…':'Relier deux agents')+'</button><span class="tag" style="margin:0">Glisse les robots pour les placer librement</span></div><div class="board" id="board"><svg class="lines"></svg>'+A.map((a,i)=>card(a,!i)).join('')+'</div>'+linksHTML()+'<h2 class="h2">Skills communs</h2><p class="tag">Envoyés à tous les agents, en plus de leurs propres skills</p><div style="margin-bottom:8px">'+syncBtn()+'</div><div class="sks">'+SK.map(s=>chip(s,COM.has(s.id))).join('')+'</div>';
+function side(){$('side').innerHTML='<h1>Mes agents</h1><p class="sub">Un chat par agent, ou tout via le Superviseur.</p><button class="ag '+(cur==='dash'?'on':'')+'" style="--c:#E8A317" data-id="dash"><span class="dot" style="--c:#E8A317">◫</span><span><span class="nm">Vue d\'ensemble</span><span class="ds">Tous les robots</span></span></button>'+A.map(a=>`<button class="ag ${a.id==='sup'?'sup ':''}${a.id===cur?'on':''}" style="--c:${a.c}" data-id="${a.id}"><span class="dot" style="--c:${a.c}">${a.i}<span class="st ${S[a.id]?'work':''}"></span></span><span><span class="nm">${a.n}</span><span class="ds">${S[a.id]?'Travaille…':a.d}</span></span>${U[a.id]?`<span class="nb">${U[a.id]}</span>`:''}</button>`).join('');
+document.querySelectorAll('.ag').forEach(b=>b.onclick=()=>{cur=b.dataset.id;U[cur]=0;draw()})}
+function draw(){side();const dash=cur==='dash';$('f').style.display=dash?'none':'';$('note').style.display=dash?'none':'';
+if(dash&&drag){pend=1;return}
+if(dash){$('head').innerHTML='<b>Vue d\'ensemble</b><div class="apis"><span>'+A.length+' agents</span><span>'+A.filter(x=>S[x.id]).length+' au travail</span></div>';const L=$('log');L.innerHTML=dashHTML();
+L.querySelectorAll('[data-id]').forEach(b=>b.onclick=()=>{cur=b.dataset.id;U[cur]=0;draw()});
+L.querySelectorAll('[data-sk]').forEach(b=>b.onclick=()=>{const id=b.dataset.sk;COM.has(id)?COM.delete(id):COM.add(id);pushState();draw()});L.querySelectorAll('[data-sync]').forEach(b=>b.onclick=sync);bindBoard(L);L.querySelector('[data-link]').onclick=()=>{linking=linking?0:1;lsrc=null;draw()};
+L.querySelectorAll('[data-lk]').forEach(b=>b.onclick=()=>{const[i,a]=b.dataset.lk.split('|'),l=LK[+i];if(a==='del')LK.splice(+i,1);else if(a==='auto')l.auto=!l.auto;else l.mode=l.mode==='direct'?'agent':'direct';saveLK();draw()});
+L.querySelector('[data-tree]').onclick=()=>{POS={};savePos();draw()};L.querySelector('[data-add]').onclick=()=>{const n=A.length,id='n'+n;A.push({id,n:'Agent '+n,d:'À configurer',c:['#2E8B6A','#B8860B','#5B6EE1'][n%3],i:String(n),apis:['Manus'],k:[],sk:[],ex:['Décris la mission de cet agent']});T[id]=[];S[id]=0;U[id]=0;saveA();cur=id;editId=id;draw()};L.scrollTop=0;return}
+const a=ag(cur);if(!T[cur].length&&RT.tasks[cur]&&!loaded[cur]){loaded[cur]=1;watch(cur,true)}
+$('head').innerHTML=`<b id="hn">${a.n}</b><button class="sk" data-edit="1" style="margin-left:10px">⚙ Réglages du robot</button>${editId===a.id?editHTML(a):''}<div class="apis">${a.apis.map(x=>`<span>${x}</span>`).join('')}</div><div class="tag" style="margin:8px 0 4px;font-size:12px;color:var(--muted)">Skills de cet agent</div><div style="margin-bottom:8px">${syncBtn()}</div><div class="sks">${SK.map(s=>COM.has(s.id)?chip(s,1,1):chip(s,a.sk.includes(s.id))).join('')}</div>`;
+$('head').querySelectorAll('[data-sync]').forEach(b=>b.onclick=sync);
+$('head').querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{editId=editId===a.id?null:a.id;draw()});
+[['e-n','n'],['e-i','i'],['e-c','c'],['e-d','d'],['e-s','instruction']].forEach(([id,k])=>{const el=$(id);if(el)el.oninput=()=>{a[k]=el.value||(k==='n'?'Sans nom':'');saveA();side();if(k==='n')$('hn').textContent=a.n}});
+$('head').querySelectorAll('[data-sk]:not([disabled])').forEach(b=>b.onclick=()=>{const id=b.dataset.sk;a.sk=a.sk.includes(id)?a.sk.filter(x=>x!==id):[...a.sk,id];saveA();draw()});
+$('in').placeholder=cur==='sup'?'Donne une mission au Superviseur…':'Écrire à '+a.n+'…';
+const L=$('log');
+L.innerHTML=T[cur].length?T[cur].map((m,i)=>m.t==='task'?`<div class="m task" style="--c:${m.c}"><i>${m.h}</i>${m.x}</div>`:`<div class="m ${m.t==='me'?'me':''}">${m.x}${m.fw?`<div class="sks" style="margin-top:8px"><span class="tag" style="margin:0;align-self:center">Envoyer à :</span>${A.filter(x=>x.id!==m.fw&&x.id!=='sup').map(x=>`<button class="sk" data-fw="${m.fw}|${x.id}|${i}">${x.n}</button>`).join('')}</div>`:''}${m.cf?`<div class="sks" style="margin-top:8px"><button class="sk on" data-cf="${m.cf}|1">Confirmer</button><button class="sk" data-cf="${m.cf}|0">Refuser</button></div>`:''}</div>`).join(''):
+`<div class="empty"><b>Aucune conversation</b><br>${cur==='sup'?'Décris une mission, le Superviseur choisit l\'agent adapté.':'Parle directement à cet agent.'}<div class="chips">${a.ex.map(e=>`<button data-e="${e}">${e}</button>`).join('')}</div></div>`;
+L.querySelectorAll('[data-fw]').forEach(b=>b.onclick=()=>{const[s,d,i]=b.dataset.fw.split('|');fwd(s,d,+i,(LK.find(l=>l.from===s&&l.to===d)||{}).mode)});L.querySelectorAll('[data-cf]').forEach(b=>b.onclick=()=>{const[t,e,y]=b.dataset.cf.split('|');confirmAct(t,e,y==='1')});L.querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>send(b.dataset.e));L.scrollTop=L.scrollHeight}
+function linkSvg(B){const cm=id=>B.querySelector(`[data-agent="${id}"]`),mid=c=>[c.offsetLeft+c.offsetWidth/2,c.offsetTop+c.offsetHeight/2];
+const ed=(c,t)=>{const[cx,cy]=mid(c),dx=t[0]-cx,dy=t[1]-cy,k=Math.min(c.offsetWidth/2/(Math.abs(dx)||1e-6),c.offsetHeight/2/(Math.abs(dy)||1e-6));return[cx+dx*k,cy+dy*k]};
+return LK.map(l=>{const a=cm(l.from),b=cm(l.to);if(!a||!b)return'';const p=ed(a,mid(b)),q=ed(b,mid(a)),t=Math.atan2(q[1]-p[1],q[0]-p[0]),h=r=>[q[0]-13*Math.cos(t+r),q[1]-13*Math.sin(t+r)],col=ag(l.from).c;
+return `<g stroke="${col}" fill="${col}"><line x1="${p[0]}" y1="${p[1]}" x2="${q[0]}" y2="${q[1]}" stroke-width="2.5"/><polygon points="${q[0]},${q[1]} ${h(.45)} ${h(-.45)}" stroke="none"/><text x="${(p[0]+q[0])/2}" y="${(p[1]+q[1])/2-6}" text-anchor="middle" font-size="11" stroke="none" style="fill:var(--ink);stroke:var(--panel);stroke-width:4px;paint-order:stroke">${l.auto?'Auto':'À valider'} · ${l.mode==='direct'?'Direct':'Agent'}</text></g>`}).join('')}
+function lines(B){const sv=B.querySelector('svg'),s=B.querySelector('[data-agent="sup"]');if(!s)return;
+sv.setAttribute('width',B.offsetWidth);sv.setAttribute('height',B.offsetHeight);
+const sx=s.offsetLeft+s.offsetWidth/2,sy=s.offsetTop+s.offsetHeight;
+sv.innerHTML=[...B.querySelectorAll('.bot')].filter(c=>c!==s).map(c=>{const x=c.offsetLeft+c.offsetWidth/2,y=c.offsetTop;return `<path d="M${sx} ${sy} C${sx} ${sy+50},${x} ${y-50},${x} ${y}"/>`}).join('')+linkSvg(B)}
+function fit(B){let mx=0,my=0;B.querySelectorAll('.bot').forEach(c=>{mx=Math.max(mx,c.offsetLeft+c.offsetWidth);my=Math.max(my,c.offsetTop+c.offsetHeight)});B.style.minWidth=(mx+30)+'px';B.style.height=Math.max(480,my+30)+'px';lines(B)}
+function bindBoard(L){const B=L.querySelector('#board');if(!B)return;
+B.querySelectorAll('.bot').forEach(c=>{let sx,sy,ox,oy,mv=0,d=0;
+c.onpointerdown=e=>{d=1;drag=1;mv=0;sx=e.clientX;sy=e.clientY;ox=c.offsetLeft;oy=c.offsetTop;c.setPointerCapture(e.pointerId);c.style.zIndex=5;c.style.cursor='grabbing'};
+c.onpointermove=e=>{if(!d)return;const dx=e.clientX-sx,dy=e.clientY-sy;if(Math.abs(dx)+Math.abs(dy)>5)mv=1;if(!mv)return;const x=Math.max(0,ox+dx),y=Math.max(0,oy+dy);c.style.left=x+'px';c.style.top=y+'px';POS[c.dataset.agent]={x,y};lines(B)};
+c.onpointercancel=()=>{d=0;drag=0};
+c.onpointerup=()=>{if(!d)return;d=0;drag=0;c.style.zIndex='';c.style.cursor='';if(mv){savePos();fit(B);if(pend){pend=0;draw()}}else if(linking){const id=c.dataset.agent;if(!lsrc){lsrc=id;c.style.outline='3px solid var(--accent)'}else if(lsrc!==id){if(!LK.some(l=>l.from===lsrc&&l.to===id))LK.push({from:lsrc,to:id,mode:'agent',auto:false});saveLK();linking=0;lsrc=null;draw()}else{lsrc=null;c.style.outline=''}}else{cur=c.dataset.agent;U[cur]=0;draw()}}});
+fit(B)}
+function push(id,m){T[id].push(m);if(id!==cur)U[id]++;draw()}
+async function toAgent(id,txt,o){o=o||{};S[id]=1;draw();try{const r=await api('/api/send',{agentId:id,message:txt,...o});if(r.skipped){S[id]=0;draw();return}RT.tasks[id]=r.taskId;known[id]=r.taskId;loaded[id]=1;watch(id)}catch(e){S[id]=0;push(id,{t:'ai',x:'Erreur : '+h(e.message)})}}
+function send(txt){txt=txt.trim();if(!txt)return;push(cur,{t:'me',x:fmt(txt)});toAgent(cur,txt)}
+async function fwd(src,dst,i){const m=T[src][i],to=ag(dst),from=ag(src);if(!m||!RT.tasks[src])return;push(src,{t:'task',c:to.c,h:'Envoyé à '+to.n,x:'Résultat de '+from.n+' transmis'});await toAgent(dst,'Données reçues de l\'agent « '+from.n+' » :\n\n'+m.raw,{via:'link',refs:[RT.tasks[src]],newTask:true})}
+async function confirmAct(t,e,ok){try{await api('/api/confirm',{taskId:t,eventId:e,input:{accept:ok}});const id=Object.keys(RT.tasks).find(k=>RT.tasks[k]===t);if(id){S[id]=1;watch(id)}}catch(x){alert(x.message)}}
+function delegate(from,mid,json){let arr;try{arr=JSON.parse(json)}catch(e){return}if(!Array.isArray(arr))arr=[arr];arr.forEach((d,k)=>{const to=ag(d.agent);if(!to||!d.task||to.id===from)return;push(from,{t:'task',c:to.c,h:'Tâche déléguée à '+to.n,x:fmt(d.task)});toAgent(to.id,d.task,{via:'sup',dedup:mid+':'+k})})}
+function show(id,m,live){
+ if(m.role==='me'){if(!live)push(id,{t:'me',x:fmt(m.text.split('\n\n[Contexte du hub')[0])});return}
+ let txt=m.text||'';const a=ag(id);
+ if(a.role==='sup'){const mt=txt.match(/```delegate\s*([\s\S]*?)```/);if(mt){txt=txt.replace(mt[0],'').trim();if(live)delegate(id,m.id,mt[1])}}
+ let x=fmt(txt);if(m.att&&m.att.length)x+='<br>'+m.att.map(f=>'<a href="'+esc(f.url)+'" target="_blank" rel="noopener">'+h(f.name||'fichier')+'</a>').join(' · ');
+ push(id,{t:'ai',x:x||'…',raw:txt,fw:a.role==='sup'?0:id})}
+async function watch(id,once){if(polling[id])return;polling[id]=1;seen[id]=seen[id]||new Set();
+try{for(let n=0;n<150;n++){const t=RT.tasks[id];if(!t)break;
+ const r=await api('/api/poll?taskId='+encodeURIComponent(t)+'&agentId='+encodeURIComponent(id)),L=r.messages;
+ L.forEach((m,k)=>{if(seen[id].has(m.id))return;if(m.role==='ai'&&['opening','progress'].includes(m.kind)&&k<L.length-1)return;seen[id].add(m.id);show(id,m,!once)});
+ if(r.waiting&&!['messageAskUser','cascadeAskUser'].includes(r.waiting.type)&&!seen[id].has('cf'+r.waiting.eventId)){seen[id].add('cf'+r.waiting.eventId);push(id,{t:'ai',x:'Confirmation requise : '+h(r.waiting.desc||r.waiting.type),cf:t+'|'+r.waiting.eventId})}
+ S[id]=r.status==='running'?1:0;side();if(cur==='dash')draw();
+ if(once||r.status!=='running')break;
+ await new Promise(ok=>setTimeout(ok,4000))}}catch(e){push(id,{t:'ai',x:'Erreur : '+h(e.message)})}
+polling[id]=0}
+async function refresh(){if(document.hidden||drag)return;try{const r=await api('/api/state');RT=r.rt||RT;A.forEach(a=>{S[a.id]=RT.status[a.id]==='running'?1:0;const t=RT.tasks[a.id];if(t&&known[a.id]!==t){known[a.id]=t;loaded[a.id]=1;if(!polling[a.id])watch(a.id)}});side();if(cur==='dash')draw()}catch(e){}}
+async function boot(){pwd=localStorage.getItem('hubpwd')||prompt('Mot de passe du dashboard')||'';if(!pwd)return;
+try{const r=await api('/api/state');localStorage.setItem('hubpwd',pwd);RT=r.rt||RT;
+if(r.state&&r.state.agents&&r.state.agents.length){A.splice(0,A.length,...r.state.agents);COM.clear();(r.state.common||[]).forEach(x=>COM.add(x));LK=r.state.links||[]}else pushState();
+LK=LK.filter(l=>ag(l.from)&&ag(l.to));
+A.forEach(a=>{a.sk=a.sk||[];T[a.id]=[];S[a.id]=RT.status[a.id]==='running'?1:0;U[a.id]=0;known[a.id]=RT.tasks[a.id]});
+await sync();syncMsg='';draw();A.forEach(a=>{if(S[a.id])watch(a.id)});setInterval(refresh,8000)}
+catch(e){document.body.innerHTML='<p style="padding:20px;font-family:sans-serif">'+h(e.message)+'</p>'}}
+$('f').onsubmit=e=>{e.preventDefault();send($('in').value);$('in').value=''};
+boot();
+</script>
+</body>
+</html>
